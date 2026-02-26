@@ -1,0 +1,70 @@
+{
+  "road_way_count": {
+    "mean": 177274.0,
+    "std": 1.0
+  },
+  "road_length_km": {
+    "mean": 22964.331813890924,
+    "std": 1.0
+  },
+  "s1_backscatter_mean": {
+    "mean": -6.934540755691982,
+    "std": 1.412603858663607
+  },
+  "s1_backscatter_p90": {
+    "mean": -2.0692466344005966,
+    "std": 2.105131299690769
+  },
+  "s1_flood_fraction": {
+    "mean": 0.009087621550154284,
+    "std": 0.0054804958939228595
+  },
+  "s2_ndvi_mean": {
+    "mean": 0.26272907932209255,
+    "std": 0.13559231652358772
+  },
+  "s2_ndwi_mean": {
+    "mean": -0.2773970601055702,
+    "std": 0.1513710021299842
+  },
+  "s2_green_p90": {
+    "mean": 3109.593755086263,
+    "std": 2055.301033357629
+  },
+  "landsat_thermal_mean_k": {
+    "mean": 296.70002732958113,
+    "std": 17.492678095893524
+  },
+  "landsat_heat_exposure_fraction": {
+    "mean": 0.3924184729746211,
+    "std": 0.4035747427301314
+  },
+  "nightlights_mean": {
+    "mean": 28.036907759162464,
+    "std": 18.017369359654673
+  },
+  "nightlights_p90": {
+    "mean": 47.67400884628296,
+    "std": 24.881903665177234
+  },
+  "population_mean": {
+    "mean": 79.99071427647557,
+    "std": 104.96739237265705
+  },
+  "population_p90": {
+    "mean": 190.0768221787044,
+    "std": 203.18972465044394
+  },
+  "era5_total_precipitation_mean": {
+    "mean": 0.0,
+    "std": 1.0
+  },
+  "era5_total_precipitation_sum": {
+    "mean": 0.0,
+    "std": 1.0
+  },
+  "era5_2m_temperature_mean": {
+    "mean": 297.2791551862444,
+    "std": 1.817150208326219
+  }
+}

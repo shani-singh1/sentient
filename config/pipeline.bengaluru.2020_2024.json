@@ -1,0 +1,11 @@
+{
+  "city": "Bengaluru",
+  "bbox": "77.45,12.8,77.75,13.1",
+  "start_date": "2020-01-01",
+  "end_date": "2024-12-31",
+  "window_size": 3,
+  "grid_size": 4,
+  "sentinel1_scale": 20,
+  "sentinel2_scale": 20,
+  "sentinel2_max_cloud": 40
+}

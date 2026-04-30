@@ -1,0 +1,2 @@
+2026-04-30T16:16:05 [1/27] START ERA5 ingestion
+2026-04-30T16:16:05 CMD python -m src.ingestion.era5_ingest --city Hyderabad --bbox '78.20,17.20,78.70,17.65' --start-date 2020-01-01 --end-date 2024-12-31

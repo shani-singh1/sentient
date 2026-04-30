@@ -11,7 +11,11 @@ import requests
 from .metadata import append_metadata, build_metadata
 from .paths import RAW_ROOT, ensure_dir
 
-OVERPASS_URL = "https://overpass-api.de/api/interpreter"
+OVERPASS_URLS = [
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+    "https://overpass.openstreetmap.fr/api/interpreter",
+]
 
 
 def parse_bbox(bbox_str: str) -> Tuple[float, float, float, float]:
@@ -52,8 +56,22 @@ def fetch_osm_roads(city: str, bbox: Tuple[float, float, float, float], start_da
     """
 
     query = build_query(bbox)
-    response = requests.post(OVERPASS_URL, data={"data": query})
-    response.raise_for_status()
+    headers = {"User-Agent": "sentient-osm-ingest/1.0", "Accept": "application/json"}
+
+    last_error: Exception | None = None
+    response: requests.Response | None = None
+    for url in OVERPASS_URLS:
+        try:
+            response = requests.post(url, data={"data": query}, headers=headers, timeout=300)
+            response.raise_for_status()
+            break
+        except requests.RequestException as exc:
+            last_error = exc
+            response = None
+
+    if response is None:
+        assert last_error is not None
+        raise last_error
 
     year = start_date.year
     month = start_date.month

@@ -44,7 +44,13 @@ function Run-Step {
   if ($StepTotal -gt 0) { $prefix = "[$StepNum/$StepTotal] " }
   Write-Log "${prefix}START $Name"
   Write-Log "CMD $Cmd"
-  $output = Invoke-Expression $Cmd 2>&1
+  $previousErrorAction = $ErrorActionPreference
+  $ErrorActionPreference = "Continue"
+  try {
+    $output = Invoke-Expression $Cmd 2>&1
+  } finally {
+    $ErrorActionPreference = $previousErrorAction
+  }
   if ($output) {
     $output | ForEach-Object {
       $txt = "$_"

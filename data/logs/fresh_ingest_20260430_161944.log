@@ -1,0 +1,6 @@
+2026-04-30T16:19:45 [1/27] START ERA5 ingestion
+2026-04-30T16:19:45 CMD python -m src.ingestion.era5_ingest --city Hyderabad --bbox '78.20,17.20,78.70,17.65' --start-date 2020-01-01 --end-date 2024-12-31
+2026-04-30T16:48:18 [1/27] DONE ERA5 ingestion
+2026-04-30T16:48:18 [2/27] START OSM ingestion
+2026-04-30T16:48:18 CMD python -m src.ingestion.osm_ingest --city Hyderabad --bbox '78.20,17.20,78.70,17.65' --start-date 2020-01-01 --end-date 2024-12-31
+2026-04-30T16:48:20 FAIL OSM ingestion (exit=1)

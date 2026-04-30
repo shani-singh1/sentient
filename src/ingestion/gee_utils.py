@@ -48,8 +48,10 @@ def export_image_to_geotiff(
     }
     retries = 5
     last_error: Exception | None = None
+    current_scale = scale
     for attempt in range(1, retries + 1):
         try:
+            payload["scale"] = current_scale
             url = image.getDownloadURL(payload)
             with requests.get(url, stream=True, timeout=600) as resp:
                 if resp.status_code in {429, 500, 502, 503, 504}:
@@ -62,6 +64,13 @@ def export_image_to_geotiff(
             return out_path
         except Exception as exc:
             last_error = exc
+            msg = str(exc)
+            # GEE direct downloads cap request payload size. Retry with a coarser
+            # scale for larger AOIs so ingestion can continue automatically.
+            if "Total request size" in msg and "must be less than or equal to" in msg:
+                current_scale = min(current_scale * 2, 1000)
+                if current_scale != payload["scale"]:
+                    continue
             if attempt == retries:
                 break
             time.sleep(min(60, 2 ** attempt))

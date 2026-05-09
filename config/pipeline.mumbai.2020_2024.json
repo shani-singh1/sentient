@@ -1,0 +1,11 @@
+{
+  "city": "Mumbai",
+  "bbox": "72.65,18.75,73.10,19.40",
+  "start_date": "2020-01-01",
+  "end_date": "2024-12-31",
+  "window_size": 3,
+  "grid_size": 4,
+  "sentinel1_scale": 20,
+  "sentinel2_scale": 20,
+  "sentinel2_max_cloud": 40
+}

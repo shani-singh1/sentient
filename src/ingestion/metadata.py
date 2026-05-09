@@ -62,7 +62,7 @@ def build_metadata(
 ) -> IngestionMetadata:
     west, south, east, north = list(bbox)
     return IngestionMetadata(
-        timestamp_utc=dt.datetime.now(dt.UTC).isoformat(timespec="seconds"),
+        timestamp_utc=dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
         source=source,
         city=city,
         start_date=start_date.isoformat(),

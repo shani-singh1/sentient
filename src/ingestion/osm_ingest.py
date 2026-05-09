@@ -76,7 +76,7 @@ def fetch_osm_roads(city: str, bbox: Tuple[float, float, float, float], start_da
     year = start_date.year
     month = start_date.month
     out_dir = ensure_dir(RAW_ROOT / "osm" / f"{year:04d}" / f"{month:02d}")
-    timestamp = dt.datetime.now(dt.UTC).strftime("%Y%m%dT%H%M%S")
+    timestamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%S")
     safe_city = city.lower().replace(" ", "_")
     out_path = out_dir / f"osm_roads_{safe_city}_{timestamp}.json"
 

@@ -1,107 +1,107 @@
 {
-  "generated_at_utc": "2026-02-25T19:05:32+00:00",
-  "project_root": "C:\\Users\\cyber\\OneDrive\\Documents\\sentient",
+  "generated_at_utc": "2026-05-03T19:15:26+00:00",
+  "project_root": "C:\\Users\\lenovo\\OneDrive\\Documents\\sentient",
   "totals": {
-    "file_count": 349,
-    "total_size_bytes": 1878935420
+    "file_count": 947,
+    "total_size_bytes": 8345251638
   },
   "by_kind": {
     ".csv": {
       "count": 1,
-      "size_bytes": 147261
+      "size_bytes": 229931
     },
     ".json": {
-      "count": 10,
-      "size_bytes": 397434544
+      "count": 16,
+      "size_bytes": 785487138
     },
     ".log": {
-      "count": 3,
-      "size_bytes": 52512
+      "count": 14,
+      "size_bytes": 79565
     },
     ".nc": {
-      "count": 60,
-      "size_bytes": 3077358
+      "count": 180,
+      "size_bytes": 9230478
     },
     ".parquet": {
       "count": 62,
-      "size_bytes": 1257505
+      "size_bytes": 1256209
     },
     ".tif": {
-      "count": 213,
-      "size_bytes": 1476966240
+      "count": 674,
+      "size_bytes": 7548968317
     }
   },
   "by_source_year": {
     "era5": {
       "2020": {
-        "count": 12,
-        "size_bytes": 615312
+        "count": 36,
+        "size_bytes": 1845936
       },
       "2021": {
-        "count": 12,
-        "size_bytes": 615312
+        "count": 36,
+        "size_bytes": 1845936
       },
       "2022": {
-        "count": 12,
-        "size_bytes": 615312
+        "count": 36,
+        "size_bytes": 1845936
       },
       "2023": {
-        "count": 12,
-        "size_bytes": 616110
+        "count": 36,
+        "size_bytes": 1846734
       },
       "2024": {
-        "count": 12,
-        "size_bytes": 615312
+        "count": 36,
+        "size_bytes": 1845936
       }
     },
     "landsat": {
       "2020": {
-        "count": 10,
-        "size_bytes": 147430924
+        "count": 31,
+        "size_bytes": 335676577
       },
       "2021": {
-        "count": 7,
-        "size_bytes": 102064294
+        "count": 28,
+        "size_bytes": 295841635
       },
       "2022": {
-        "count": 10,
-        "size_bytes": 79185774
+        "count": 32,
+        "size_bytes": 296153525
       },
       "2023": {
-        "count": 10,
-        "size_bytes": 36420788
+        "count": 32,
+        "size_bytes": 252172378
       },
       "2024": {
-        "count": 10,
-        "size_bytes": 36583078
+        "count": 31,
+        "size_bytes": 243638291
       }
     },
     "nightlights": {
       "2020": {
-        "count": 12,
-        "size_bytes": 145819
+        "count": 36,
+        "size_bytes": 792794
       },
       "2021": {
-        "count": 12,
-        "size_bytes": 151479
+        "count": 36,
+        "size_bytes": 853288
       },
       "2022": {
-        "count": 12,
-        "size_bytes": 138597
+        "count": 36,
+        "size_bytes": 796019
       },
       "2023": {
-        "count": 12,
-        "size_bytes": 148636
+        "count": 36,
+        "size_bytes": 803277
       },
       "2024": {
-        "count": 12,
-        "size_bytes": 145029
+        "count": 36,
+        "size_bytes": 808006
       }
     },
     "osm": {
       "2020": {
-        "count": 1,
-        "size_bytes": 79535670
+        "count": 6,
+        "size_bytes": 467242337
       },
       "2024": {
         "count": 4,
@@ -110,52 +110,52 @@
     },
     "population": {
       "2020": {
-        "count": 1,
-        "size_bytes": 398860
+        "count": 3,
+        "size_bytes": 2063087
       }
     },
     "sentinel1": {
       "2020": {
-        "count": 12,
-        "size_bytes": 119428664
+        "count": 36,
+        "size_bytes": 785170982
       },
       "2021": {
-        "count": 12,
-        "size_bytes": 119426633
+        "count": 36,
+        "size_bytes": 783676465
       },
       "2022": {
-        "count": 12,
-        "size_bytes": 119593902
+        "count": 36,
+        "size_bytes": 783843502
       },
       "2023": {
-        "count": 12,
-        "size_bytes": 119557392
+        "count": 36,
+        "size_bytes": 785061951
       },
       "2024": {
-        "count": 12,
-        "size_bytes": 119867631
+        "count": 36,
+        "size_bytes": 786733452
       }
     },
     "sentinel2": {
       "2020": {
-        "count": 9,
-        "size_bytes": 96664367
+        "count": 32,
+        "size_bytes": 454014191
       },
       "2021": {
-        "count": 7,
-        "size_bytes": 73467365
+        "count": 30,
+        "size_bytes": 409362464
       },
       "2022": {
-        "count": 10,
-        "size_bytes": 106348682
+        "count": 31,
+        "size_bytes": 425635069
       },
       "2023": {
-        "count": 9,
-        "size_bytes": 93063728
+        "count": 32,
+        "size_bytes": 465588529
       },
       "2024": {
-        "count": 10,
-        "size_bytes": 106734598
+        "count": 32,
+        "size_bytes": 440282835
       }
     }
   }

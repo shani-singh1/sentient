@@ -1,10 +1,14 @@
 {
-  "dataset_version": "v1-b05ed24d7b45",
-  "city": "Bengaluru",
+  "dataset_version": "v1-a096a1c46bf5",
+  "cities": [
+    "bengaluru",
+    "mumbai",
+    "hyderabad"
+  ],
   "window_size": 3,
   "train_fraction_for_normalization": 0.7,
-  "train_cutoff_date": "2023-07-01",
-  "rows": 848,
+  "train_cutoff_date": "2023-06-01",
+  "rows": 2480,
   "target_month_min": "2020-04",
   "target_month_max": "2024-12"
 }

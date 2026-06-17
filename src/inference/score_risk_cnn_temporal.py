@@ -57,7 +57,10 @@ def main() -> None:
             preds.append(p.detach().cpu().numpy())
     y_pred = np.concatenate(preds) if preds else np.array([], dtype=np.float32)
 
-    out = df[["tile_id", "time_window", "target_month", "sample_month"]].copy()
+    base_cols = ["tile_id", "time_window", "target_month", "sample_month"]
+    if "city" in df.columns:
+        base_cols.insert(0, "city")
+    out = df[base_cols].copy()
     out["zone_id"] = out["tile_id"].astype(str).map(zone_from_tile)
     out["road_segment_id"] = out["tile_id"].astype(str) + "_roads"
     out["model_track"] = "cnn_temporal"

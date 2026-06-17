@@ -157,7 +157,24 @@ def monthly_tif_path(source: str, prefix: str, city: str, year: int, month: int)
 
 
 def population_path(city: str, year: int) -> Path:
-    return RAW_ROOT / "population" / f"{year:04d}" / "01" / f"worldpop_{city.lower().replace(' ', '_')}_{year:04d}.tif"
+    city_key = city.lower().replace(" ", "_")
+    exact = RAW_ROOT / "population" / f"{year:04d}" / "01" / f"worldpop_{city_key}_{year:04d}.tif"
+    if exact.exists():
+        return exact
+
+    population_root = RAW_ROOT / "population"
+    candidates = sorted(population_root.glob(f"*/01/worldpop_{city_key}_*.tif"))
+    usable: list[Path] = []
+    for path in candidates:
+        try:
+            candidate_year = int(path.stem.rsplit("_", 1)[-1])
+        except ValueError:
+            continue
+        if candidate_year <= year:
+            usable.append(path)
+    if usable:
+        return usable[-1]
+    return exact
 
 
 def month_has_overlap(city: str, year: int, month: int) -> bool:

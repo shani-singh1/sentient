@@ -51,12 +51,25 @@ def month_list(start_month: str, end_month: str) -> list[str]:
 
 
 def parse_tile(tile_id: str) -> tuple[int, int]:
+    if "__" in tile_id:
+        tile_id = tile_id.split("__", 1)[1]
     _, y, x = tile_id.split("_")
     return int(y), int(x)
 
 
+def city_from_row(row: pd.Series, default_city: str) -> str:
+    if "city" in row.index and not pd.isna(row["city"]):
+        return str(row["city"]).lower().replace(" ", "_")
+    tile_id = str(row.get("tile_id", ""))
+    if "__" in tile_id:
+        return tile_id.split("__", 1)[0].lower().replace(" ", "_")
+    return default_city
+
+
 def zone_from_tile(tile_id: str) -> str:
     try:
+        if "__" in tile_id:
+            tile_id = tile_id.split("__", 1)[1]
         y, x = parse_tile(tile_id)
         return f"zone_{y // 2}_{x // 2}"
     except Exception:
@@ -82,7 +95,21 @@ def raster_path(source: str, city: str, ym: str) -> Path:
     if source == "nightlights":
         return RAW_ROOT / "nightlights" / y / m / f"viirs_monthly_{city}_{y}{m}.tif"
     if source == "population":
-        return RAW_ROOT / "population" / y / "01" / f"worldpop_{city}_{y}.tif"
+        exact = RAW_ROOT / "population" / y / "01" / f"worldpop_{city}_{y}.tif"
+        if exact.exists():
+            return exact
+        candidates = sorted((RAW_ROOT / "population").glob(f"*/01/worldpop_{city}_*.tif"))
+        usable: list[Path] = []
+        for path in candidates:
+            try:
+                candidate_year = int(path.stem.rsplit("_", 1)[-1])
+            except ValueError:
+                continue
+            if candidate_year <= int(y):
+                usable.append(path)
+        if usable:
+            return usable[-1]
+        return exact
     raise ValueError(source)
 
 
@@ -127,7 +154,7 @@ class ImageSequenceDataset(Dataset):
         self.grid_size = grid_size
         self.out_size = out_size
         self.augment = augment
-        self._cache: dict[tuple[str, str], torch.Tensor] = {}
+        self._cache: dict[tuple[str, str, str], torch.Tensor] = {}
 
     @property
     def in_channels(self) -> int:
@@ -140,8 +167,8 @@ class ImageSequenceDataset(Dataset):
     def __len__(self) -> int:
         return len(self.df)
 
-    def _load_month_tile(self, ym: str, tile_id: str) -> torch.Tensor:
-        key = (ym, tile_id)
+    def _load_month_tile(self, ym: str, tile_id: str, city: str) -> torch.Tensor:
+        key = (city, ym, tile_id)
         if key in self._cache:
             return self._cache[key]
 
@@ -168,10 +195,11 @@ class ImageSequenceDataset(Dataset):
 
     def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         row = self.df.iloc[idx]
+        city = city_from_row(row, self.city)
         start_month, end_month = str(row["time_window"]).split("__")
         months = month_list(start_month, end_month)
 
-        seq = [self._load_month_tile(ym, str(row["tile_id"])) for ym in months]
+        seq = [self._load_month_tile(ym, str(row["tile_id"]), city) for ym in months]
         x_seq = torch.stack(seq, dim=0)
         x_seq = self._augment_seq(x_seq)
 

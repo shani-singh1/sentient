@@ -32,18 +32,24 @@ FEATURE_COLUMNS = [
 ]
 
 
+def city_key(city: str) -> str:
+    return city.lower().replace(" ", "_")
+
+
 def load_processed_monthlies(city: str) -> pd.DataFrame:
-    city_dir = PROCESSED_ROOT / city.lower().replace(" ", "_")
+    city_dir = PROCESSED_ROOT / city_key(city)
     files = sorted(city_dir.glob("*.parquet"))
     if not files:
         raise FileNotFoundError(f"No processed parquet files found in {city_dir}")
 
     frames = [pd.read_parquet(p) for p in files]
     df = pd.concat(frames, ignore_index=True)
+    df["city"] = city_key(city)
     if "tile_id" not in df.columns:
         df["tile_id"] = "tile_00_00"
+    df["tile_id"] = df["city"].astype(str) + "__" + df["tile_id"].astype(str)
     df["date"] = pd.to_datetime(df["month_id"] + "-01")
-    df = df.sort_values(["tile_id", "date"]).reset_index(drop=True)
+    df = df.sort_values(["city", "tile_id", "date"]).reset_index(drop=True)
     return df
 
 
@@ -97,6 +103,7 @@ def build_windows(df: pd.DataFrame, window_size: int) -> pd.DataFrame:
             )
 
             record: dict[str, float | int | str] = {
+                "city": str(cur["city"]),
                 "tile_id": str(tile_id),
                 "time_window": f"{window.iloc[0]['month_id']}__{window.iloc[-1]['month_id']}",
                 "target_month": str(next_row["month_id"]),
@@ -109,6 +116,9 @@ def build_windows(df: pd.DataFrame, window_size: int) -> pd.DataFrame:
                 row = window.iloc[window_size - 1 - lag]
                 for col in FEATURE_COLUMNS:
                     record[f"{col}_lag{lag}"] = float(row[col])
+
+            for city_name in sorted(df["city"].astype(str).unique()):
+                record[f"city_{city_name}"] = 1.0 if str(cur["city"]) == city_name else 0.0
 
             record["stress_accum_rain_3m"] = float(window["era5_total_precipitation_sum"].tail(3).sum())
             record["stress_accum_heat_3m"] = float(window["landsat_heat_exposure_fraction"].tail(3).mean())
@@ -126,7 +136,7 @@ def build_windows(df: pd.DataFrame, window_size: int) -> pd.DataFrame:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Build ML-ready temporal windows from processed monthly stress data.")
-    parser.add_argument("--city", required=True)
+    parser.add_argument("--city", required=True, help="City name, or a comma-separated list for one general model.")
     parser.add_argument("--window-size", type=int, default=3)
     parser.add_argument("--train-fraction", type=float, default=0.7)
     args = parser.parse_args()
@@ -137,7 +147,12 @@ def main() -> None:
     if args.train_fraction <= 0.0 or args.train_fraction >= 1.0:
         raise ValueError("--train-fraction must be between 0 and 1")
 
-    df = load_processed_monthlies(args.city)
+    cities = [c.strip() for c in args.city.split(",") if c.strip()]
+    if not cities:
+        raise ValueError("--city must include at least one city")
+
+    df = pd.concat([load_processed_monthlies(city) for city in cities], ignore_index=True)
+    df = df.sort_values(["date", "city", "tile_id"]).reset_index(drop=True)
     split_idx = max(1, int(len(df) * args.train_fraction))
     split_idx = min(split_idx, len(df) - 1)
     train_cutoff_date = df["date"].sort_values().iloc[split_idx - 1]
@@ -147,7 +162,7 @@ def main() -> None:
     out = build_windows(df, args.window_size)
 
     version_seed = {
-        "city": args.city.lower().replace(" ", "_"),
+        "cities": [city_key(city) for city in cities],
         "window_size": args.window_size,
         "train_fraction": args.train_fraction,
         "target_month_min": str(out["target_month"].min()) if len(out) else "",
@@ -169,7 +184,7 @@ def main() -> None:
         json.dumps(
             {
                 "dataset_version": dataset_version,
-                "city": args.city,
+                "cities": [city_key(city) for city in cities],
                 "window_size": args.window_size,
                 "train_fraction_for_normalization": args.train_fraction,
                 "train_cutoff_date": str(train_cutoff_date.date()),

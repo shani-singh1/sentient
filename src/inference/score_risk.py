@@ -21,6 +21,8 @@ def normalize_0_1(series: pd.Series) -> pd.Series:
 
 def zone_from_tile(tile_id: str) -> str:
     try:
+        if "__" in tile_id:
+            tile_id = tile_id.split("__", 1)[1]
         _, y, x = tile_id.split("_")
         yi = int(y)
         xi = int(x)
@@ -45,7 +47,10 @@ def main() -> None:
     x = df[features].to_numpy(dtype=float)
     pred = model.predict(x)
 
-    out = df[["tile_id", "time_window", "target_month", "sample_month"]].copy()
+    base_cols = ["tile_id", "time_window", "target_month", "sample_month"]
+    if "city" in df.columns:
+        base_cols.insert(0, "city")
+    out = df[base_cols].copy()
     out["zone_id"] = out["tile_id"].astype(str).map(zone_from_tile)
     out["road_segment_id"] = out["tile_id"].astype(str) + "_roads"
     out["model_track"] = "tabular"

@@ -43,6 +43,7 @@ def select_features(df: pd.DataFrame, mode: str) -> list[str]:
             "sample_month",
             "target_date",
             "dataset_version",
+            "city",
         }
     ]
     if mode == "baseline":
@@ -158,7 +159,14 @@ def main() -> None:
         ("temporal_gb", temporal_gb),
         ("temporal_rf", temporal_rf),
     ]
-    best_name, best_obj = max(candidates, key=lambda x: float(x[1]["metrics"]["r2"]))
+    best_name, best_obj = max(
+        candidates,
+        key=lambda x: (
+            float(x[1]["metrics"]["top_decile_lift"]),
+            float(x[1]["metrics"]["spearman"]),
+            float(x[1]["metrics"]["r2"]),
+        ),
+    )
     joblib.dump({"model": best_obj["model"], "features": best_obj["features"], "model_name": best_name}, out_dir / "best_model.joblib")
 
     val_target = val_df["target_proxy"].to_numpy(dtype=float)

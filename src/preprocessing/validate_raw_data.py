@@ -43,6 +43,19 @@ def expected_annual_files(city_key: str, year: int) -> dict[str, Path]:
     }
 
 
+def population_fallback_file(city_key: str, year: int) -> Path | None:
+    candidates = sorted((RAW_ROOT / "population").glob(f"*/01/worldpop_{city_key}_*.tif"))
+    usable: list[Path] = []
+    for path in candidates:
+        try:
+            candidate_year = int(path.stem.rsplit("_", 1)[-1])
+        except ValueError:
+            continue
+        if candidate_year <= year:
+            usable.append(path)
+    return usable[-1] if usable else None
+
+
 def _raster_summary(path: Path) -> dict[str, Any]:
     with rasterio.open(path) as ds:
         return {
@@ -98,6 +111,13 @@ def validate(
                     raster_checks[source].append(_raster_summary(path))
                 except Exception as exc:
                     errors.append(f"{source} raster unreadable: {path} ({exc})")
+            elif source == "population" and (fallback := population_fallback_file(city_key, year)) is not None:
+                existing_counts[source] += 1
+                warnings.append(f"using fallback population raster for {year}: {fallback}")
+                try:
+                    raster_checks[source].append(_raster_summary(fallback))
+                except Exception as exc:
+                    errors.append(f"{source} fallback raster unreadable: {fallback} ({exc})")
             else:
                 errors.append(f"missing {source} file: {path}")
 

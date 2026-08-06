@@ -1,5 +1,5 @@
 /* ============================================================
-   SENTIENT — control-room design system
+   SENTIENT control-room design system
    One accent (bureau amber), semantic tier colors, flat surfaces.
    ============================================================ */
 :root {
@@ -10,7 +10,7 @@
   --border-strong: #343b45;
   --text: #e7e5de;
   --text-dim: #8b929b;
-  --accent: #c9a227;        /* bureau amber — the only decorative color */
+  --accent: #c9a227;        /* bureau amber, the only decorative color */
   --critical: #e5484d;
   --watch: #d99a2b;
   --stable: #5f6b76;

@@ -1,5 +1,5 @@
 /* ============================================================
-   SENTIENT — Road Infrastructure Command Center
+   SENTIENT Road Infrastructure Command Center
    Real basemap (CARTO dark + OSM labels) with risk overlays,
    a narrative time machine, and a budget planner.
    ============================================================ */
@@ -13,7 +13,7 @@ const ACCENT = "#c9a227";
 const COST_PER_KM_CR = 0.65;    // preventive resurfacing, ₹ crore per km
 const REACTIVE_MULT = 3.2;      // reactive repair cost multiplier
 const FAIL_LIKELIHOOD = 0.55;   // modelled 3-yr failure likelihood in critical band
-const PLAY_MS_PER_MONTH = 380;  // time machine pace — slow enough to read the story
+const PLAY_MS_PER_MONTH = 380;  // time machine pace, slow enough to read the story
 
 /* ---------- state ---------- */
 const S = {
@@ -41,7 +41,7 @@ const fmtCr = (n) => n >= 100 ? `₹${fmt(n)} cr` : `₹${fmt(n, n < 10 ? 1 : 0)
 const lerp = (a, b, t) => a + (b - a) * t;
 const ease = (t) => 1 - Math.pow(1 - t, 3);
 const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const monthLabel = (m) => m ? MONTH_NAMES[+m.split("-")[1] - 1] + " " + m.split("-")[0] : "—";
+const monthLabel = (m) => m ? MONTH_NAMES[+m.split("-")[1] - 1] + " " + m.split("-")[0] : "-";
 const monthNum = (m) => +m.split("-")[1];
 const isMonsoon = (m) => { const n = monthNum(m); return n >= 6 && n <= 9; };
 
@@ -68,7 +68,7 @@ function valueAt(series, i) {
   return null;
 }
 
-// 3-month smoothed value — monthly satellite readings are noisy; banding a
+// 3-month smoothed value: monthly satellite readings are noisy; banding a
 // single month against a threshold makes roads blink.
 function smoothValueAt(series, i) {
   let s = 0, n = 0;
@@ -107,7 +107,7 @@ function score100(r) {
 }
 
 function zoneName(z) {
-  return { NE: "north-east", NW: "north-west", SE: "south-east", SW: "south-west" }[z] || z || "—";
+  return { NE: "north-east", NW: "north-west", SE: "south-east", SW: "south-west" }[z] || z || "-";
 }
 
 function zoneOfTile(tileId) {
@@ -465,7 +465,7 @@ function setMode(mode) {
    ============================================================ */
 function renderHeroStats() {
   const sm = S.data.cities[S.city].summary;
-  $("ov-kicker").textContent = `${S.data.cities[S.city].label.toUpperCase()} — RISK SNAPSHOT`;
+  $("ov-kicker").textContent = `${S.data.cities[S.city].label.toUpperCase()}: RISK SNAPSHOT`;
 
   const exposure = sm.total_length_km * (sm.pct_high / 100) * COST_PER_KM_CR * (REACTIVE_MULT - 1) * FAIL_LIKELIHOOD;
   const highCount = S.roads.filter((r) => r.risk_level === "High").length;
@@ -474,7 +474,7 @@ function renderHeroStats() {
     ? { color: "var(--critical)", num: sm.critical_now, cap: `road segments are in the <b>critical band today</b> and need attention this quarter` }
     : sm.entering_critical_6m > 0
       ? { color: "var(--critical)", num: sm.entering_critical_6m, cap: `road segments projected to <b>enter the critical band within 6 months</b>` }
-      : { color: "var(--critical)", num: highCount, cap: `tracked road segments sit in the <b>top risk tier</b> — inspect these first` };
+      : { color: "var(--critical)", num: highCount, cap: `tracked road segments sit in the <b>top risk tier</b>. Inspect these first` };
 
   const cards = [
     firstCard,
@@ -482,13 +482,13 @@ function renderHeroStats() {
       color: sm.monsoon_stress_yoy_pct > 0 ? "var(--critical)" : "var(--saved)",
       num: (sm.monsoon_stress_yoy_pct > 0 ? "+" : "") + (sm.monsoon_stress_yoy_pct ?? 0) + "%",
       raw: true,
-      cap: `monsoon stress vs last year — ${sm.monsoon_stress_yoy_pct > 0 ? "rising, act before the next wet season" : "easing, hold preventive gains"}`,
+      cap: `monsoon stress vs last year: ${sm.monsoon_stress_yoy_pct > 0 ? "rising, act before the next wet season" : "easing, hold preventive gains"}`,
     },
     {
       color: "var(--watch)",
-      num: sm.risk_concentration ? sm.risk_concentration + "×" : "—",
+      num: sm.risk_concentration ? sm.risk_concentration + "×" : "-",
       raw: true,
-      cap: `the top 10% of roads carry <b>${sm.risk_concentration}× the stress</b> of the rest — small budgets go far here`,
+      cap: `the top 10% of roads carry <b>${sm.risk_concentration}× the stress</b> of the rest, so small budgets go far here`,
     },
     {
       color: "var(--text)",
@@ -573,13 +573,13 @@ function selectRoad(r) {
   const cd = $("drawer-countdown"), cdCap = $("drawer-countdown-cap");
   if (r.months_to_critical === 0) { cd.textContent = "NOW"; cd.style.color = "var(--critical)"; cdCap.textContent = "in critical band"; }
   else if (r.months_to_critical != null) { cd.textContent = r.months_to_critical + " mo"; cd.style.color = "var(--watch)"; cdCap.textContent = "to critical band"; }
-  else { cd.textContent = "—"; cd.style.color = ""; cdCap.textContent = "no critical trajectory"; }
+  else { cd.textContent = "-"; cd.style.color = ""; cdCap.textContent = "no critical trajectory"; }
 
   $("drawer-len").textContent = (r.length_m / 1000).toFixed(1) + " km";
 
   const dw = $("drawer-drivers");
   dw.innerHTML = "";
-  if (!r.drivers || !r.drivers.length) dw.innerHTML = `<div class="ri-sub">No dominant stress driver — risk is broad-based.</div>`;
+  if (!r.drivers || !r.drivers.length) dw.innerHTML = `<div class="ri-sub">No dominant stress driver. Risk is broad-based.</div>`;
   for (const drv of r.drivers || []) {
     const sev = drv.score >= 80 ? "severe" : drv.score >= 55 ? "elevated" : "moderate";
     const row = document.createElement("div");
@@ -654,7 +654,7 @@ function drawSpark(r) {
   g.font = "9px sans-serif";
   g.fillText("critical band", 8, Y(highCut) - 4);
 
-  // trend line — single neutral color; the threshold gives it meaning
+  // trend line: single neutral color; the threshold gives it meaning
   g.strokeStyle = "#b9bfc7";
   g.lineWidth = 1.8;
   g.lineCap = "round";
@@ -705,7 +705,7 @@ document.addEventListener("click", (e) => {
 });
 
 /* ============================================================
-   TIME MACHINE — playback + narrative
+   TIME MACHINE: playback + narrative
    ============================================================ */
 $("play-btn").onclick = () => {
   if (S.playTimer) { stopPlayback(); return; }
@@ -750,7 +750,7 @@ function updateTimeUI() {
   const m = S.data.months[i];
   $("time-month").textContent = monthLabel(m);
   const note = $("time-note");
-  note.textContent = isMonsoon(m) ? "monsoon window — stress peaks" : "dry season";
+  note.textContent = isMonsoon(m) ? "monsoon window, stress peaks" : "dry season";
   note.classList.toggle("monsoon", isMonsoon(m));
   $("scrubber").value = i;
   drawScrubCursor();
@@ -778,9 +778,9 @@ function updateTimeUI() {
   $("hot-count").textContent = hot;
   $("hot-delta").innerHTML = hotPrev != null
     ? (hot > hotPrev
-      ? `up from <b>${hotPrev}</b> six months ago — stress is spreading`
+      ? `up from <b>${hotPrev}</b> six months ago. Stress is spreading`
       : hot < hotPrev
-        ? `down from <b>${hotPrev}</b> six months ago — pressure is easing`
+        ? `down from <b>${hotPrev}</b> six months ago. Pressure is easing`
         : `unchanged over six months`)
     : "";
 
@@ -790,7 +790,7 @@ function updateTimeUI() {
 
 function setMeter(key, v) {
   const val = v == null ? 0 : v;
-  $("mv-" + key).textContent = v == null ? "—" : v + " / 100";
+  $("mv-" + key).textContent = v == null ? "-" : v + " / 100";
   const bar = $("mf-" + key);
   bar.style.width = val + "%";
   bar.className = val >= 75 ? "severe" : val >= 50 ? "hot" : "";
@@ -813,22 +813,22 @@ function storyCaption(i, m, d, hot, hotPrev) {
 
   if (isMonsoon(m)) {
     if ((d.rain ?? 0) >= 50) {
-      return `Monsoon rain is loading the network — rainfall at ${d.rain}/100` +
+      return `Monsoon rain is loading the network: rainfall at ${d.rain}/100` +
         ((d.flood ?? 0) >= 50 ? ` with standing water at ${d.flood}/100. Water works into cracks and weakens the road base.` : `. Saturated ground accelerates surface wear.`) +
         zoneTxt;
     }
-    return `The monsoon window is open, though rainfall loading is moderate so far (${d.rain ?? "—"}/100). Each wet spell soaks into cracks left by earlier seasons — drainage fixes made now pay off double.` + zoneTxt;
+    return `The monsoon window is open, though rainfall loading is moderate so far (${d.rain ?? "-"}/100). Each wet spell soaks into cracks left by earlier seasons, so drainage fixes made now pay off double.` + zoneTxt;
   }
   if ((d.flood ?? 0) >= 65) {
     return `Standing water is the dominant pressure right now (${d.flood}/100). Poor drainage keeps moisture in the pavement structure long after the rain stops.` + zoneTxt;
   }
   if ((d.heat ?? 0) >= 60 && !isMonsoon(m)) {
-    return `Dry-season heat is doing the damage now — thermal stress at ${d.heat}/100 expands and cracks surfacing that the last monsoon weakened.` + zoneTxt;
+    return `Dry-season heat is doing the damage now: thermal stress at ${d.heat}/100 expands and cracks surfacing that the last monsoon weakened.` + zoneTxt;
   }
   if (worsening) {
     return `No single driver dominates, but damage is compounding: each wet-dry cycle leaves roads slightly weaker than the one before.` + zoneTxt;
   }
-  return `Stress is comparatively low this month — the best window for inspections and preventive resurfacing before the next monsoon.`;
+  return `Stress is comparatively low this month. It is the best window for inspections and preventive resurfacing before the next monsoon.`;
 }
 
 function updateStoryRoad() {
@@ -843,8 +843,8 @@ function updateStoryRoad() {
   const driver = r.drivers && r.drivers[0] ? r.drivers[0].label.toLowerCase() : null;
   let status;
   if (band == null) status = "No satellite reading for this month.";
-  else if (band === "High") status = `In the <b>critical band</b> this month${driver ? ` — ${driver} has taken its toll` : ""}.`;
-  else if (band === "Medium") status = `In the <b>watch band</b>${driver ? ` — ${driver} is building up` : ""}.`;
+  else if (band === "High") status = `In the <b>critical band</b> this month${driver ? `. Sustained ${driver} has taken its toll` : ""}.`;
+  else if (band === "Medium") status = `In the <b>watch band</b>${driver ? `. ${driver.charAt(0).toUpperCase() + driver.slice(1)} is building up` : ""}.`;
   else status = `Holding <b>stable</b> at this point in time.`;
   $("story-road-status").innerHTML = status;
 }
@@ -1014,7 +1014,7 @@ function buildBrief() {
 
   $("brief-content").innerHTML = `
     <div class="brief-header">
-      <h1>Road Infrastructure Risk Brief — ${label}</h1>
+      <h1>Road Infrastructure Risk Brief: ${label}</h1>
       <div class="bh-sub">Prepared ${now.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })} ·
       Satellite-observed stress, 2020–2024 · For maintenance planning purposes</div>
     </div>
@@ -1023,7 +1023,7 @@ function buildBrief() {
       <div class="brief-kpi"><div class="n">${sm.critical_now > 0 ? sm.critical_now : S.roads.filter((r) => r.risk_level === "High").length}</div>
         <div class="c">${sm.critical_now > 0 ? "segments in critical band now" : "segments in the top priority tier"}</div></div>
       <div class="brief-kpi"><div class="n">${sm.monsoon_stress_yoy_pct > 0 ? "+" : ""}${sm.monsoon_stress_yoy_pct ?? 0}%</div><div class="c">monsoon stress vs last year</div></div>
-      <div class="brief-kpi"><div class="n">${sm.risk_concentration ?? "—"}×</div><div class="c">stress concentration in top 10% of roads</div></div>
+      <div class="brief-kpi"><div class="n">${sm.risk_concentration ?? "-"}×</div><div class="c">stress concentration in top 10% of roads</div></div>
       <div class="brief-kpi"><div class="n">${zoneName(sm.worst_zone)}</div><div class="c">most stressed sector</div></div>
     </div>
 
@@ -1032,7 +1032,7 @@ function buildBrief() {
       <p style="font-size:13px;line-height:1.7">
         Treating the <b>${planRoads.length} highest-priority roads</b> (${planKm.toFixed(1)} km) with preventive
         maintenance requires an estimated <b>${fmtCr(planCost)}</b> and avoids an estimated
-        <b>${fmtCr(planSaved)}</b> in reactive repairs over the following three years —
+        <b>${fmtCr(planSaved)}</b> in reactive repairs over the following three years,
         <b>₹${(planSaved / Math.max(0.01, planCost)).toFixed(1)} avoided per ₹1 invested</b>.
       </p>
     </div>
@@ -1087,7 +1087,7 @@ function ensureRAF() {
 ensureRAF().then(() => initMap());
 loadData().catch((err) => {
   $("splash-progress").style.width = "100%";
-  document.querySelector(".splash-sub").textContent = "COULD NOT LOAD RISK DATA — IS THE API RUNNING?";
+  document.querySelector(".splash-sub").textContent = "COULD NOT LOAD RISK DATA. IS THE API RUNNING?";
   console.error(err);
 });
 window.addEventListener("resize", () => { if (S.data) renderScrubber(); });

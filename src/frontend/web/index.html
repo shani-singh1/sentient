@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>SENTIENT — Road Infrastructure Command Center</title>
+<title>SENTIENT | Road Infrastructure Command Center</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
 <link rel="stylesheet" href="styles.css?v=3" />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230C0E12'/><circle cx='50' cy='50' r='22' fill='none' stroke='%23C9A227' stroke-width='8'/></svg>" />
@@ -50,7 +50,7 @@
   <aside id="panel-overview" class="panel left-panel">
     <div class="panel-kicker" id="ov-kicker">CITY RISK SNAPSHOT</div>
     <div id="hero-stats"></div>
-    <div class="panel-section-title">ACT FIRST <span class="hint">— highest projected risk</span></div>
+    <div class="panel-section-title">ACT FIRST <span class="hint">· highest projected risk</span></div>
     <ol id="act-first"></ol>
     <div class="legend">
       <span><i class="sw sw-high"></i>Critical</span>
@@ -63,25 +63,25 @@
   <!-- Left: time machine story -->
   <aside id="panel-story" class="panel left-panel hidden">
     <div class="panel-kicker">HOW THE STRESS BUILT UP</div>
-    <div id="story-month">—</div>
-    <div id="story-phase">—</div>
+    <div id="story-month">-</div>
+    <div id="story-phase">-</div>
     <p id="story-caption"></p>
 
     <div class="meter">
-      <div class="meter-head"><span>Rainfall loading</span><b id="mv-rain">—</b></div>
+      <div class="meter-head"><span>Rainfall loading</span><b id="mv-rain">-</b></div>
       <div class="meter-track"><i id="mf-rain"></i></div>
     </div>
     <div class="meter">
-      <div class="meter-head"><span>Standing water</span><b id="mv-flood">—</b></div>
+      <div class="meter-head"><span>Standing water</span><b id="mv-flood">-</b></div>
       <div class="meter-track"><i id="mf-flood"></i></div>
     </div>
     <div class="meter">
-      <div class="meter-head"><span>Heat exposure</span><b id="mv-heat">—</b></div>
+      <div class="meter-head"><span>Heat exposure</span><b id="mv-heat">-</b></div>
       <div class="meter-track"><i id="mf-heat"></i></div>
     </div>
 
     <div id="story-hot">
-      <div class="hot-row"><b id="hot-count">—</b><span>of 16 city sectors under exceptional stress this month</span></div>
+      <div class="hot-row"><b id="hot-count">-</b><span>of 16 city sectors under exceptional stress this month</span></div>
       <div id="hot-delta"></div>
     </div>
 
@@ -110,7 +110,7 @@
     <div class="coverage-track"><div id="coverage-fill"></div></div>
     <div class="roi-line" id="roi-line"></div>
 
-    <div class="panel-section-title">WORK ORDER <span class="hint">— auto-prioritized</span></div>
+    <div class="panel-section-title">WORK ORDER <span class="hint">· auto-prioritized</span></div>
     <ol id="plan-list"></ol>
     <div class="assumptions">
       Planning assumptions: preventive resurfacing ₹<span id="as-cost">65</span> lakh/km ·
@@ -127,9 +127,9 @@
     <div id="drawer-sub" class="drawer-sub"></div>
 
     <div class="drawer-stats">
-      <div><div class="ds-num" id="drawer-risk">—</div><div class="ds-cap">priority score / 100</div></div>
-      <div><div class="ds-num" id="drawer-countdown">—</div><div class="ds-cap" id="drawer-countdown-cap">to critical band</div></div>
-      <div><div class="ds-num" id="drawer-len">—</div><div class="ds-cap">length</div></div>
+      <div><div class="ds-num" id="drawer-risk">-</div><div class="ds-cap">priority score / 100</div></div>
+      <div><div class="ds-num" id="drawer-countdown">-</div><div class="ds-cap" id="drawer-countdown-cap">to critical band</div></div>
+      <div><div class="ds-num" id="drawer-len">-</div><div class="ds-cap">length</div></div>
     </div>
 
     <div class="panel-section-title">WHY THIS ROAD</div>
@@ -140,7 +140,7 @@
 
     <div class="action-card">
       <div class="action-kicker">RECOMMENDED ACTION</div>
-      <div id="drawer-action">—</div>
+      <div id="drawer-action">-</div>
     </div>
     <button id="add-plan-btn" class="solid-btn wide">Add to maintenance plan</button>
   </aside>
@@ -148,7 +148,7 @@
   <!-- Bottom: timeline -->
   <div id="timebar" class="hidden">
     <button id="play-btn" title="Play">▶</button>
-    <div id="time-readout"><span id="time-month">—</span><span id="time-note"></span></div>
+    <div id="time-readout"><span id="time-month">-</span><span id="time-note"></span></div>
     <div id="scrubber-wrap">
       <canvas id="trend-canvas" height="56"></canvas>
       <input id="scrubber" type="range" min="0" max="56" step="1" value="56" />

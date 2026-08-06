@@ -132,7 +132,7 @@ def build_model(mode: str):
             reg_alpha=0.1,
             reg_lambda=1.0,
             random_state=42,
-            n_jobs=-1,
+            n_jobs=4,
             verbosity=-1,
         )
     if mode == "temporal_xgb":
@@ -146,8 +146,41 @@ def build_model(mode: str):
             reg_alpha=0.1,
             reg_lambda=1.0,
             random_state=42,
-            n_jobs=-1,
+            n_jobs=4,
             tree_method="hist",
+        )
+    if mode == "temporal_et_tuned":
+        return ExtraTreesRegressor(
+            n_estimators=1200,
+            max_depth=None,
+            min_samples_leaf=1,
+            max_features=0.4,
+            random_state=42,
+            n_jobs=-1,
+        )
+    if mode == "temporal_lgbm_tuned":
+        return LGBMRegressor(
+            n_estimators=1800,
+            learning_rate=0.02,
+            num_leaves=63,
+            min_child_samples=5,
+            subsample=0.8,
+            subsample_freq=1,
+            colsample_bytree=0.6,
+            reg_alpha=0.05,
+            reg_lambda=0.5,
+            random_state=42,
+            n_jobs=4,
+            verbosity=-1,
+        )
+    if mode == "temporal_blend":
+        # Equal-weight blend of the three strongest families.
+        return BlendRegressor(
+            estimators=[
+                build_model("temporal_et"),
+                build_model("temporal_rf"),
+                build_model("temporal_lgbm"),
+            ],
         )
     if mode == "temporal_stack":
         return TimeStackRegressor(
@@ -161,6 +194,22 @@ def build_model(mode: str):
             meta_fraction=0.25,
         )
     raise ValueError(f"unsupported mode: {mode}")
+
+
+class BlendRegressor(BaseEstimator, RegressorMixin):
+    """Equal-weight average of independently fit base regressors."""
+
+    def __init__(self, estimators: list):
+        self.estimators = estimators
+
+    def fit(self, X, y):
+        self.fitted_ = [clone(e) for e in self.estimators]
+        for m in self.fitted_:
+            m.fit(X, y)
+        return self
+
+    def predict(self, X):
+        return np.mean(np.column_stack([m.predict(X) for m in self.fitted_]), axis=1)
 
 
 class TimeStackRegressor(BaseEstimator, RegressorMixin):
@@ -246,8 +295,11 @@ def main() -> None:
         "temporal_gb",
         "temporal_rf",
         "temporal_et",
+        "temporal_et_tuned",
         "temporal_lgbm",
+        "temporal_lgbm_tuned",
         "temporal_xgb",
+        "temporal_blend",
         "temporal_stack",
     ]
     trained: dict[str, dict[str, object]] = {}

@@ -3,3 +3,9 @@ execution_plan_ingestion_to_eval.md
 .env 
 .logs
 buildui.md
+
+# Model artifacts above GitHub's size limits; regenerate with train_models.py
+models/temporal_et_model.joblib
+models/temporal_et_tuned_model.joblib
+models/temporal_blend_model.joblib
+models/temporal_stack_model.joblib

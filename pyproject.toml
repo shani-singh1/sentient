@@ -1,0 +1,9 @@
+[tool.pytest.ini_options]
+markers = [
+    "unit: fast isolated tests of a single pure function",
+    "component: tests of one module or script exercised through its own entry point",
+    "integration: tests that chain multiple modules together through real interfaces",
+    "e2e: tests that drive the running application through a real browser",
+    "slow: tests that take noticeably longer to run than the rest of the suite",
+]
+testpaths = ["tests"]

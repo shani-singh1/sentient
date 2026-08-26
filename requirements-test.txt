@@ -1,0 +1,5 @@
+# Test-only dependencies. Install with:
+#   python -m pip install -r requirements.txt -r requirements-test.txt
+#   python -m playwright install chromium
+httpx
+playwright

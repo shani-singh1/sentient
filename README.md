@@ -23,6 +23,7 @@ It currently covers **Bengaluru, Mumbai, and Hyderabad** with monthly satellite 
 - [Frontend engineering notes](#frontend-engineering-notes)
 - [Project structure](#project-structure)
 - [Quick start](#quick-start)
+- [Testing](#testing)
 - [Configuration](#configuration)
 - [Planning assumptions](#planning-assumptions)
 - [Limitations and honesty notes](#limitations-and-honesty-notes)
@@ -323,6 +324,42 @@ Open `http://localhost:8000`. Smoke tests:
 python -m pytest tests/smoke -q
 python scripts/smoke_test_api.py
 ```
+
+## Testing
+
+The suite follows the standard test pyramid, one directory per tier under `tests/`:
+
+- `tests/unit/` tests a single pure function in isolation (feature math, metric formulas, path helpers).
+- `tests/component/` runs one script's real `main()` entry point end to end against a temporary filesystem, or exercises the API layer's own helper functions and error paths.
+- `tests/integration/` chains multiple modules through their real interfaces: a full synthetic run of the offline pipeline (dataset build through the road-level dashboard), and the FastAPI service tested against the real, already-deployed data.
+- `tests/e2e/` drives the real running application through a real headless Chromium browser (Playwright), replaying complete user journeys: loading the Command Center, drilling into a road, replaying the Time Machine, planning a budget, and exporting the Executive Brief.
+- `tests/smoke/` is the original lightweight artifact-presence check kept for the deployed environment.
+
+Every individual test case, its input, its expected output, and its last known status is catalogued in [docs/TEST_CASES.md](docs/TEST_CASES.md). A short pseudocode reference for the core algorithms is in [docs/KEY_ALGORITHMS.md](docs/KEY_ALGORITHMS.md).
+
+Install test dependencies and the Playwright browser once:
+
+```powershell
+python -m pip install -r requirements.txt -r requirements-test.txt
+python -m playwright install chromium
+```
+
+Run everything:
+
+```powershell
+python -m pytest
+```
+
+Run a single tier:
+
+```powershell
+python -m pytest -m unit
+python -m pytest -m component
+python -m pytest -m integration
+python -m pytest -m e2e
+```
+
+The end-to-end suite stubs two third-party network dependencies that carry no application logic (CARTO basemap tile imagery, and the MapLibre GL library itself, vendored locally from the same CDN release the app loads in production) so it stays deterministic on hosts with unreliable outbound network access. Every DOM interaction and API call it exercises is the real, unmodified application.
 
 ## Configuration
 

@@ -273,7 +273,10 @@ sentient/
     processed/<city>/              monthly tile stress parquets
     features/                      dataset.parquet + normalization stats + manifest
     results/                       risk scores, rankings, dashboard.json, evaluation
-  docs/                            documentation and screenshots
+  docs/
+    screenshots/                   Command Center screenshots used in this README
+    TEST_CASES.md                  every test case: input, expected output, status
+    KEY_ALGORITHMS.md              short pseudocode reference for the core logic
   models/                          trained models + training metrics
   scripts/                         pipeline runners and smoke tests
   src/
@@ -285,7 +288,15 @@ sentient/
     evaluation/                    proxy evaluation with guardrails
     api/                           FastAPI service, serves API + frontend
     frontend/web/                  the Command Center (html/css/js)
-  tests/smoke/                     artifact contract tests
+  tests/
+    unit/                          pure-function tests
+    component/                     per-script CLI and API-helper tests
+    integration/                   cross-module pipeline and live-API tests
+    e2e/                           real-browser user-journey tests
+    smoke/                         artifact contract tests
+  pyproject.toml                   pytest configuration and markers
+  requirements.txt                 application dependencies
+  requirements-test.txt            test-only dependencies (playwright, httpx)
 ```
 
 ## Quick start

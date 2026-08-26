@@ -53,12 +53,12 @@ Outputs:
 
 #### Tabular track
 
-- `src.training.train_models`
+- `src.training.train_models` trains a 10-model sweep (Ridge baseline, HistGB, RandomForest, ExtraTrees x2, LightGBM x2, XGBoost, an equal-weight blend, and a temporal-holdout stack) and auto-selects the best by top-decile lift, then Spearman, then R2. Currently `temporal_lgbm_tuned`.
 - `src.inference.score_risk`
 - `src.evaluation.evaluate`
 
 Artifacts:
-- `models/best_model.joblib`
+- `models/best_model.joblib` (and one `<mode>_model.joblib` per candidate)
 - `models/training_metrics.json`
 - `data/results/risk_scores.parquet`
 - `data/results/evaluation.json`
@@ -75,11 +75,12 @@ Artifacts:
 
 ### Stage E: Road-level ranking and inventory
 
-- `src.features.build_road_risk --max-roads 300`
+- `src.features.build_road_risk --city "Bengaluru,Mumbai,Hyderabad" --max-roads 1500`
 - `scripts/generate_data_inventory.py`
 
 Artifacts:
 - `data/results/road_risk_ranking.json`
+- `data/results/dashboard.json` (the single payload the Command Center frontend loads)
 - `data/results/data_inventory_manifest.json`
 
 ## Recommended Execution Modes

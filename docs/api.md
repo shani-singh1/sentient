@@ -1,16 +1,24 @@
 # API
 
-Backend service is implemented in `src/api/main.py` using FastAPI.
+The API and the Command Center frontend are one FastAPI service, implemented in `src/api/main.py`.
 
 ## Run
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/run_api.ps1
+python -m uvicorn src.api.main:app --host 127.0.0.1 --port 8000
 ```
 
-Default base URL: `http://127.0.0.1:8000`
+Default base URL: `http://127.0.0.1:8000`. Opening it in a browser serves the Command Center itself.
 
 ## Endpoints
+
+## `GET /`
+
+Serves the Command Center frontend (`src/frontend/web/index.html`, mounted as static files). This route is registered last so it never shadows the API routes below.
+
+## `GET /dashboard`
+
+Returns `data/results/dashboard.json` as-is: the single precomputed payload the frontend loads once at boot (city summaries, tile risk series, driver indices, and every road with its trend, drivers, and recommended action). 404 if the file has not been generated yet.
 
 ## `GET /metadata`
 

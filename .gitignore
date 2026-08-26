@@ -1,8 +1,11 @@
 build.md
 execution_plan_ingestion_to_eval.md
-.env 
+.env
 .logs
 buildui.md
+
+# mkdocs build output
+site/
 
 # Model artifacts above GitHub's size limits; regenerate with train_models.py
 models/temporal_et_model.joblib

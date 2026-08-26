@@ -46,8 +46,8 @@ Sentient transforms city-scale environmental stress signals into road-level risk
 
 ### 6) Serving layer
 
-- API: `src/api/main.py` (FastAPI)
-- Frontend: `src/frontend/app.py` (Streamlit + PyDeck + Plotly)
+- API: `src/api/main.py` (FastAPI). Serves the JSON API and mounts the frontend's static files at `/`, so one process serves both.
+- Frontend: `src/frontend/web/` (the Command Center). Plain HTML, CSS, and JavaScript, no build step. The only runtime dependency is MapLibre GL JS, loaded from a CDN. Real basemap tiles (CARTO, OpenStreetMap data) give every city recognizable streets and localities; risk-ranked roads are drawn as colored GeoJSON line layers on top.
 
 ## Runtime Artifacts
 
@@ -59,7 +59,7 @@ Sentient transforms city-scale environmental stress signals into road-level risk
 
 ## Configuration Model
 
-Primary config file: `config/pipeline.bengaluru.2020_2024.json`
+One config file per city: `config/pipeline.<city>.2020_2024.json` (Bengaluru, Mumbai, Hyderabad, and a draft Chennai config that has not been fully ingested).
 
 Key parameters:
 - `city`
@@ -71,6 +71,6 @@ Key parameters:
 
 ## Design Notes
 
-- **Model redundancy:** CNN-temporal primary with tabular fallback.
+- **Model redundancy:** a 10-model tabular sweep with automatic selection (currently `temporal_lgbm_tuned`), plus an independent CNN-temporal track as a second opinion.
 - **Operational traceability:** reports and manifests in `data/results/`.
-- **Decision focus:** road-level ranking output designed for inspection planning, not just tile heatmaps.
+- **Decision focus:** road-level ranking output designed for inspection planning, not just tile heatmaps. Risk tiers are relative percentiles within each city, not absolute thresholds, since the model predicts relative prioritization rather than a calibrated failure probability.

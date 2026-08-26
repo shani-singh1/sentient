@@ -33,12 +33,12 @@ Actions:
 ## 2) Missing or stale outputs
 
 Symptoms:
-- API returns 404 on risk endpoints
-- frontend reports missing road risk file
+- API returns 404 on `/risk/roads` or `/dashboard`
+- frontend shows the splash screen indefinitely, or console shows a fetch error for `/dashboard`
 
 Actions:
 - re-run inference stage
-- run `python -m src.features.build_road_risk --max-roads 300`
+- run `python -m src.features.build_road_risk --city "Bengaluru,Mumbai,Hyderabad" --max-roads 1500`
 
 ## 3) Inconsistent data contracts
 
@@ -61,12 +61,18 @@ Actions:
 
 ## Deployment Notes
 
-- API and frontend are file-backed and can run independently.
+- The API and the frontend are one process (`src.api.main:app`) and are file-backed, no database required.
 - Use `docker-compose.yml` / `Dockerfile` for containerized environments.
 - Keep `config` and model artifact names stable across deployments.
+
+## Testing Before a Deploy
+
+- Full suite: `python -m pytest`
+- Just the fast tiers: `python -m pytest -m "unit or component or integration"`
+- Every test case, its input, and expected output is catalogued in `Testing`.
 
 ## Suggested Enhancements
 
 - Add CI checks for schema compatibility of risk output files.
-- Add automated tests for API endpoint field contracts.
+- Wire the existing test suite (`tests/unit`, `tests/component`, `tests/integration`, `tests/e2e`) into a CI pipeline.
 - Add release tags to model artifact versions for rollback safety.

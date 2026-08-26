@@ -2,10 +2,10 @@
 
 ## Prerequisites
 
-- Python 3.10+
+- Python 3.12+
 - Windows PowerShell (project scripts are PowerShell-first)
-- Network access for data providers
-- Credentials for:
+- Network access for data providers (only needed to re-ingest raw satellite data; the repo ships with processed data and a trained model already in place)
+- Credentials for re-ingestion only:
   - ERA5 (`CDS_API_KEY`)
   - Google Earth Engine (`GEE_PROJECT_ID`, plus local authentication)
 
@@ -15,7 +15,14 @@
 python -m pip install -r requirements.txt
 ```
 
-For documentation site (optional but recommended):
+For running the test suite (optional):
+
+```powershell
+python -m pip install -r requirements-test.txt
+python -m playwright install chromium
+```
+
+For this documentation site (optional):
 
 ```powershell
 python -m pip install mkdocs mkdocs-material
@@ -36,33 +43,42 @@ earthengine authenticate
 
 ## 3) Validate project config
 
-Default config used by run scripts:
+One config per city, used by the run scripts:
 
-`config/pipeline.bengaluru.2020_2024.json`
+`config/pipeline.bengaluru.2020_2024.json`, `config/pipeline.mumbai.2020_2024.json`, `config/pipeline.hyderabad.2020_2024.json`
 
-## 4) First smoke run (recommended)
+## 4) Run the app
+
+```powershell
+python -m uvicorn src.api.main:app --host 127.0.0.1 --port 8000
+```
+
+Open `http://localhost:8000` for the Command Center.
+
+## 5) First smoke run (recommended)
 
 Run API smoke checks after generating outputs:
 
 ```powershell
 python scripts/smoke_test_api.py
+python -m pytest tests/smoke -q
 ```
 
-## 5) Run documentation UI locally
+## 6) Run documentation UI locally
+
+The Command Center already uses port 8000, so serve docs on a different port:
 
 ```powershell
-mkdocs serve
+mkdocs serve -a 127.0.0.1:8001
 ```
 
-Then open:
-
-`http://127.0.0.1:8000`
+Then open `http://127.0.0.1:8001`.
 
 ## Common Setup Issues
 
-- `streamlit` command not found:
-  - Use `python -m streamlit run src/frontend/app.py --server.port 8501`
 - Missing parquet support:
   - Ensure `pyarrow` is installed from `requirements.txt`
-- Credential failures:
+- Credential failures during re-ingestion:
   - Confirm env vars are visible in current shell session
+- Port 8000 already in use:
+  - Another instance of the app (or the docs site) is likely running; stop it or pick a different `--port`

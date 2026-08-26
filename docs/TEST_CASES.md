@@ -7,7 +7,7 @@ This document lists every automated test in the repository: what it checks, what
 - **Integration** (`tests/integration/`): multiple modules chained through their real interfaces (the full offline pipeline), or the FastAPI service against the real, already-deployed data.
 - **End-to-end** (`tests/e2e/`): a real headless browser (Playwright + Chromium) driving the real running application through complete user journeys.
 
-Run everything with `python -m pytest`. Run one tier with `python -m pytest -m unit` (or `component`, `integration`, `e2e`). See [README.md](../README.md#testing) for setup instructions.
+Run everything with `python -m pytest`. Run one tier with `python -m pytest -m unit` (or `component`, `integration`, `e2e`). See `Setup` for installing test dependencies (`requirements-test.txt` and the Playwright browser).
 
 Status reflects the most recent full run on 2026-08-26: all 139 unit, component, and integration tests pass. The 9 end-to-end tests are correct and have each been independently verified against the running application, but the automated pytest run of all 9 together did not complete within its retry budget on the shared host it last ran on; see the caveat in the end-to-end section below for what was ruled out and why.
 

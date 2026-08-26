@@ -1,5 +1,5 @@
-site_name: Sentient - Bengaluru Road Risk Intelligence
-site_description: End-to-end pipeline and product documentation for Bengaluru road risk prediction from satellite signals.
+site_name: SENTIENT Documentation
+site_description: End-to-end pipeline and product documentation for road infrastructure risk prediction from satellite signals, across Bengaluru, Mumbai, and Hyderabad.
 repo_name: sentient
 theme:
   name: material
@@ -31,6 +31,8 @@ nav:
   - Setup: setup.md
   - Pipeline: pipeline.md
   - Data Contracts: data-contracts.md
+  - Key Algorithms: KEY_ALGORITHMS.md
   - API: api.md
   - Frontend: frontend.md
+  - Testing: TEST_CASES.md
   - Operations: operations.md

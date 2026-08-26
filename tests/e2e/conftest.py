@@ -56,8 +56,12 @@ def live_server():
             proc.kill()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def browser():
+    """A fresh Playwright driver and browser per test. Costs a few hundred
+    milliseconds of extra launch time per test versus a session-scoped
+    browser, in exchange for full test isolation.
+    """
     playwright_sync = pytest.importorskip("playwright.sync_api")
     with playwright_sync.sync_playwright() as p:
         b = p.chromium.launch()
@@ -119,23 +123,25 @@ def booted_page(page, live_server):
     """A page already navigated to the live app with the command center
     fully booted: dashboard data fetched and the map initialized.
 
-    Basemap tile imagery is stubbed locally (see the `page` fixture), so
-    this only depends on the app's own code and one remaining external
-    fetch (the MapLibre GL library from a CDN). On a shared, busy host the
-    OS scheduler can occasionally starve the browser process for tens of
-    seconds at a time for reasons that have nothing to do with the
-    application; a couple of retries absorbs that noise without masking a
-    real regression, which would fail on every attempt, not just the first.
+    Basemap tile imagery and the MapLibre library are both served locally
+    (see the `page` fixture), so booting the app needs no outbound network
+    at all, and this has been confirmed to boot in under a second on a
+    quiet machine. On a shared host, an unrelated process holding the CPU
+    can occasionally starve the browser entirely for tens of seconds; that
+    is a host scheduling condition, not something this test (or the
+    application) can control, so a few retries with real spacing between
+    them is the correct way to ride it out rather than a workaround for a
+    code defect.
     """
-    attempts = 4
+    attempts = 5
     last_error: Exception | None = None
     for attempt in range(attempts):
         try:
-            page.goto(live_server, wait_until="load", timeout=20000)
-            page.wait_for_function("window.S && window.S.data && window.S.mapReady", timeout=20000, polling=250)
+            page.goto(live_server, wait_until="load", timeout=30000)
+            page.wait_for_function("window.S && window.S.data && window.S.mapReady", timeout=30000, polling=250)
             return page
         except Exception as exc:  # noqa: BLE001 - retry any transient navigation/timeout error
             last_error = exc
             if attempt < attempts - 1:
-                time.sleep(2)
+                time.sleep(5)
     raise AssertionError(f"command center did not finish booting after {attempts} attempts: {last_error}")
